@@ -25,6 +25,8 @@ try{
  const cookies={Cookie:guest.cookie};
  await request('/orders',{pickup_x:0,pickup_y:20,dropoff_x:70,dropoff_y:70,class:'economy'},cookies,400);
  const initial=await state();
+ assert.ok(initial.drivers.filter(d=>d.status==='available').length>=7,'Smoke needs an idle test environment: at least 7 available drivers');
+ assert.ok(initial.drivers.filter(d=>d.class==='comfort'&&d.status==='available').length>=2,'Smoke needs at least 2 available comfort drivers');
  const target=initial.drivers.find(d=>d.class==='comfort'&&d.status==='available');assert.ok(target,'free comfort driver');
  const order=(await request('/orders',{pickup_x:target.x,pickup_y:target.y,dropoff_x:75,dropoff_y:80,class:'comfort'},cookies,201)).data;created.push(order.id);
  const offered=await waitFor(s=>s.orders.find(o=>o.id===order.id&&o.status==='offered'));assert.equal(offered.driver_id,target.id,'nearest compatible driver');
@@ -33,8 +35,12 @@ try{
  await request(`/orders/${order.id}/accept`,{},cookies,403);
  await request(`/orders/${order.id}/decline`,{},service);
  const again=await waitFor(s=>s.orders.find(o=>o.id===order.id&&o.status==='offered'&&o.driver_id!==target.id));assert.notEqual(again.driver_id,target.id);
- for(const action of ['accept','arrive','start','complete'])await request(`/orders/${order.id}/${action}`,{},service);
- await request(`/orders/${order.id}/accept`,{},service,409);
+ const otherDriver=initial.drivers.find(d=>d.id!==again.driver_id);
+ const wrongSession=await request('/auth/login',{role:'driver',driver_id:otherDriver.id,password:env.DEMO_PASSWORD});
+ await request(`/orders/${order.id}/accept`,{},{Cookie:wrongSession.cookie},403);
+ const driverSession=await request('/auth/login',{role:'driver',driver_id:again.driver_id,password:env.DEMO_PASSWORD});
+ for(const action of ['accept','arrive','start','complete'])await request(`/orders/${order.id}/${action}`,{},{Cookie:driverSession.cookie});
+ await request(`/orders/${order.id}/accept`,{},{Cookie:driverSession.cookie},409);
  const queue=[];
  for(let i=0;i<12;i++){const o=(await request('/orders',{pickup_x:15+i,pickup_y:25,dropoff_x:85,dropoff_y:70,class:'economy'},service,201)).data;created.push(o.id);queue.push(o.id);}
  await waitFor(s=>s.orders.filter(o=>queue.includes(o.id)&&o.status==='offered').length>=7);
