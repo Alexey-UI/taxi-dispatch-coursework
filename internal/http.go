@@ -200,7 +200,7 @@ func (a *API) state(w http.ResponseWriter, r *http.Request) {
 		a.serverError(w, err)
 		return
 	}
-	write(w, 200, map[string]any{"drivers": drivers, "orders": orders, "events": events, "stats": stats, "actor": u, "public_participation": a.public})
+	write(w, 200, map[string]any{"drivers": drivers, "orders": orders, "events": events, "stats": stats, "actor": u, "public_participation": a.public, "city": City})
 }
 func (a *API) createOrder(w http.ResponseWriter, r *http.Request) {
 	u := a.actor(r)
@@ -218,8 +218,14 @@ func (a *API) createOrder(w http.ResponseWriter, r *http.Request) {
 	if !decode(w, r, &in) {
 		return
 	}
-	if !ValidPoint(in.PickupX, in.PickupY) || !ValidPoint(in.DropoffX, in.DropoffY) || (in.Class != "economy" && in.Class != "comfort") || Distance(in.PickupX, in.PickupY, in.DropoffX, in.DropoffY) < 3 {
-		fail(w, 400, "Координаты 5–95; маршрут от 3 единиц; класс economy/comfort")
+	if !ValidPoint(in.PickupX, in.PickupY) || !ValidPoint(in.DropoffX, in.DropoffY) || (in.Class != "economy" && in.Class != "comfort") {
+		fail(w, 400, "Координаты X: 5–195, Y: 5–135; маршрут от 3 единиц; класс economy/comfort")
+		return
+	}
+	pickup, dropoff := SnapRoad(Point{in.PickupX, in.PickupY}), SnapRoad(Point{in.DropoffX, in.DropoffY})
+	in.PickupX, in.PickupY, in.DropoffX, in.DropoffY = pickup.X, pickup.Y, dropoff.X, dropoff.Y
+	if RoadDistance(pickup, dropoff) < 3 {
+		fail(w, 400, "Точки на дорогах слишком близко друг к другу")
 		return
 	}
 	ctx := r.Context()
@@ -353,6 +359,8 @@ func (a *API) position(w http.ResponseWriter, r *http.Request) {
 		fail(w, 400, "Координаты вне карты")
 		return
 	}
+	point := SnapRoad(Point{in.X, in.Y})
+	in.X, in.Y = point.X, point.Y
 	result, err := a.s.DB.Exec(r.Context(), "UPDATE drivers SET x=$2,y=$3 WHERE id=$1", id, in.X, in.Y)
 	if err != nil {
 		a.serverError(w, err)

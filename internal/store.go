@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log/slog"
+	"math"
 	"time"
 
 	"github.com/jackc/pgx/v5"
@@ -15,7 +16,7 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-//go:embed schema.sql
+//go:embed schema.sql migrations/*.sql
 var schema embed.FS
 
 type Store struct {
@@ -57,6 +58,25 @@ func (s *Store) Migrate(ctx context.Context) error {
 	b, _ := schema.ReadFile("schema.sql")
 	if _, err = tx.Exec(ctx, string(b)); err != nil {
 		return err
+	}
+	if _, err = tx.Exec(ctx, "CREATE TABLE IF NOT EXISTS schema_migrations(version text PRIMARY KEY,applied_at timestamptz NOT NULL DEFAULT now())"); err != nil {
+		return err
+	}
+	var applied bool
+	if err = tx.QueryRow(ctx, "SELECT EXISTS(SELECT 1 FROM schema_migrations WHERE version='002_road_city')").Scan(&applied); err != nil {
+		return err
+	}
+	if !applied {
+		migration, readErr := schema.ReadFile("migrations/002_road_city.sql")
+		if readErr != nil {
+			return readErr
+		}
+		if _, err = tx.Exec(ctx, string(migration)); err != nil {
+			return err
+		}
+		if _, err = tx.Exec(ctx, "INSERT INTO schema_migrations(version) VALUES('002_road_city')"); err != nil {
+			return err
+		}
 	}
 	return tx.Commit(ctx)
 }
@@ -147,15 +167,34 @@ func (s *Store) Dispatch(ctx context.Context) error {
 		if err != nil {
 			return err
 		}
-		var did string
-		err = tx.QueryRow(ctx, `SELECT d.id FROM drivers d WHERE status='available' AND ($3='economy' OR class='comfort')
-   AND NOT EXISTS(SELECT 1 FROM attempts a WHERE a.order_id=$4 AND a.driver_id=d.id)
-   ORDER BY ((x-$1)*(x-$1)+(y-$2)*(y-$2)),d.id LIMIT 1 FOR UPDATE SKIP LOCKED`, x, y, class, oid).Scan(&did)
-		if err == pgx.ErrNoRows {
-			continue
+		candidates, queryErr := tx.Query(ctx, `SELECT d.id,d.x,d.y FROM drivers d WHERE status='available' AND ($1='economy' OR class='comfort')
+ AND NOT EXISTS(SELECT 1 FROM attempts a WHERE a.order_id=$2 AND a.driver_id=d.id)
+ ORDER BY d.id FOR UPDATE SKIP LOCKED`, class, oid)
+		if queryErr != nil {
+			return queryErr
 		}
+		did := ""
+		best := math.Inf(1)
+		for candidates.Next() {
+			var id string
+			var dx, dy float64
+			if err = candidates.Scan(&id, &dx, &dy); err != nil {
+				candidates.Close()
+				return err
+			}
+			cost := RoadDistance(Point{dx, dy}, Point{x, y})
+			if cost < best-1e-8 {
+				best = cost
+				did = id
+			}
+		}
+		err = candidates.Err()
+		candidates.Close()
 		if err != nil {
 			return err
+		}
+		if did == "" {
+			continue
 		}
 		if _, err = tx.Exec(ctx, "UPDATE drivers SET status='offered' WHERE id=$1", did); err != nil {
 			return err

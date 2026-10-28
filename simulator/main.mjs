@@ -1,5 +1,6 @@
 import http from 'node:http';
-import {stepToward,randomGenerator,makeOrder} from './engine.mjs';
+import {randomGenerator,makeOrder} from './engine.mjs';
+import {advanceOnRoad} from '../web/roads.mjs';
 
 const base=process.env.API_URL||'http://api:8080';
 const key=process.env.SERVICE_KEY;
@@ -11,16 +12,19 @@ async function api(path,body){
  if(!response.ok)throw new Error(`API ${response.status} ${path}`);
  return response.json();
 }
-let tickNumber=0,lastSuccess=Date.now(),stopping=false;
+let tickNumber=0,lastSuccess=Date.now(),lastMotion=Date.now(),stopping=false;
 async function tick(){
  const settings=await api('/api/simulation');
+ const now=Date.now(),elapsed=Math.min(2,(now-lastMotion)/1000);lastMotion=now;
  if(!settings.running){lastSuccess=Date.now();return;}
  const state=await api('/api/state');
+ const speed=Number(process.env.SIMULATION_SPEED||state.city.speed);
+ if(!Number.isFinite(speed)||speed<=0||speed>10)throw new Error('SIMULATION_SPEED must be between 0 and 10');
  const active=state.orders.filter(o=>!['completed','cancelled'].includes(o.status));
  const every=settings.scenario==='burst'?2:settings.scenario==='shortage'?3:7;
  if(tickNumber++%every===0 && active.length<(settings.scenario==='burst'?45:settings.scenario==='shortage'?18:8)){
   const amount=settings.scenario==='burst'?5:1;
-  for(let i=0;i<amount;i++) {try{const order=await api('/api/orders',makeOrder(random));log('info','order generated',{order_id:order.id,scenario:settings.scenario});}catch(err){log('warn',err.message);}}
+  for(let i=0;i<amount;i++) {try{const order=await api('/api/orders',makeOrder(random,state.city));log('info','order generated',{order_id:order.id,scenario:settings.scenario});}catch(err){log('warn',err.message);}}
  }
  for(const order of active){
   const driver=state.drivers.find(d=>d.id===order.driver_id);if(!driver)continue;
@@ -30,7 +34,7 @@ async function tick(){
    if(order.status==='offered'&&age>2){await api(`/api/orders/${order.id}/${settings.scenario==='refusals'&&random()<0.45?'decline':'accept'}`,{});}
    else if(order.status==='accepted'||order.status==='in_progress'){
     const target=order.status==='accepted'?{x:order.pickup_x,y:order.pickup_y}:{x:order.dropoff_x,y:order.dropoff_y};
-    const p=stepToward(driver,target);await api(`/api/drivers/${driver.id}/position`,{x:p.x,y:p.y});
+    const p=advanceOnRoad(driver,target,state.city,speed*elapsed);await api(`/api/drivers/${driver.id}/position`,{x:p.x,y:p.y});
     if(p.arrived)await api(`/api/orders/${order.id}/${order.status==='accepted'?'arrive':'complete'}`,{});
    }else if(order.status==='arrived'&&age>2){await api(`/api/orders/${order.id}/start`,{});}
   }catch(err){log('warn',err.message,{order_id:order.id});}

@@ -1,13 +1,52 @@
+import {snapRoad,planRoute,routeLength,pointAlong} from './roads.mjs';
 const $=s=>document.querySelector(s);
 const statusNames={pending:'Поиск водителя',offered:'Предложен',accepted:'На подаче',arrived:'Водитель прибыл',in_progress:'В поездке',completed:'Завершён',cancelled:'Отменён'};
 let state={drivers:[],orders:[],events:[],actor:{role:'observer'}},settings={running:false,scenario:'normal'},filter='all',picking=null;
 const markers=new Map();
+let city=null,zoom=1,view={x:0,y:0},drag=null,dragged=false;
 const svgNS='http://www.w3.org/2000/svg';
 function svg(tag,attrs={},text){const el=document.createElementNS(svgNS,tag);for(const [k,v]of Object.entries(attrs))el.setAttribute(k,v);if(text!==undefined)el.textContent=text;return el;}
 function toast(message){$('#toast').textContent=message;$('#toast').style.display='block';clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('#toast').style.display='none',4500);}
 async function api(path,body){const res=await fetch('/api'+path,{method:body===undefined?'GET':'POST',headers:{'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify(body),signal:AbortSignal.timeout(6000)});const result=await res.json();if(!res.ok)throw new Error(result.error||`Ошибка ${res.status}`);return result;}
 function actionButton(text,action,order){const btn=document.createElement('button');btn.className='action';btn.textContent=text;btn.onclick=async()=>{btn.disabled=true;try{await api(`/orders/${order.id}/${action}`,{});await refresh();}catch(err){toast(err.message);}finally{btn.disabled=false;}};return btn;}
+function renderCity(){
+ const layer=$('#city-layer');layer.replaceChildren();
+ const width=city.width*10,height=city.height*10;
+ layer.append(svg('rect',{width,height,fill:'#edf0e9'}));
+ for(let x=city.min_x;x<city.max_x;x+=city.street_step)for(let y=city.min_y;y<city.max_y;y+=city.street_step){
+  const park=((x*7+y*3)%70===0);
+  layer.append(svg('rect',{x:x*10+15,y:y*10+15,width:70,height:70,rx:park?20:9,fill:park?'#c7d9b8':((x+y)%30===0?'#d9e2d2':'#e0e6da')}));
+  if(!park)layer.append(svg('rect',{x:x*10+28,y:y*10+28,width:44,height:44,rx:5,fill:'#d5dfcd',opacity:.7}));
+ }
+ for(let x=city.min_x;x<=city.max_x;x+=city.street_step){
+  layer.append(svg('path',{d:`M${x*10},${city.min_y*10} V${city.max_y*10}`,stroke:'#fafcf7','stroke-width':22}));
+ }
+ for(let y=city.min_y;y<=city.max_y;y+=city.street_step){
+  layer.append(svg('path',{d:`M${city.min_x*10},${y*10} H${city.max_x*10}`,stroke:'#fafcf7','stroke-width':22}));
+ }
+ for(const [x,y,label]of [[24,31,'СЕВЕРНЫЙ'],[130,31,'ВОСТОЧНЫЙ'],[45,111,'ЗАПАДНЫЙ'],[150,111,'ЮЖНЫЙ'],[89,71,'ЦЕНТР']])layer.append(svg('text',{x:x*10,y:y*10,class:'map-label'},label));
+ for(const [axis,max]of [['x',city.max_x],['y',city.max_y]])for(const prefix of ['pickup','dropoff']){const input=$(`#order-form [name=${prefix}_${axis}]`);input.min=axis==='x'?city.min_x:city.min_y;input.max=max;input.step='any';}
+ $('#coordinate-help').textContent=`X: ${city.min_x}–${city.max_x}, Y: ${city.min_y}–${city.max_y}. Точки привязываются к ближайшей дороге.`;
+ setView();
+}
+function setView(){
+ if(!city)return;const width=city.width*10/zoom,height=city.height*10/zoom;
+ view.x=Math.max(0,Math.min(city.width*10-width,view.x));view.y=Math.max(0,Math.min(city.height*10-height,view.y));
+ $('#map').setAttribute('viewBox',`${view.x} ${view.y} ${width} ${height}`);
+ $('#zoom-out').disabled=zoom<=1;$('#zoom-in').disabled=zoom>=4;
+}
+function changeZoom(factor){if(!city)return;const oldWidth=city.width*10/zoom,oldHeight=city.height*10/zoom;zoom=Math.max(1,Math.min(4,zoom*factor));view.x+=(oldWidth-city.width*10/zoom)/2;view.y+=(oldHeight-city.height*10/zoom)/2;setView();}
+function animate(now){
+ for(const marker of markers.values()){
+  const motion=marker.motion;
+  if(motion){const ratio=Math.min(1,(now-motion.started)/1500);marker.display=pointAlong(motion.path,motion.length*ratio);if(ratio>=1)marker.motion=null;}
+  if(marker.display)marker.setAttribute('transform',`translate(${marker.display.x*10} ${marker.display.y*10})`);
+ }
+ requestAnimationFrame(animate);
+}
+requestAnimationFrame(animate);
 function draw(){
+ if(!city){city=state.city;renderCity();}
  $('#metric-drivers').textContent=state.drivers.filter(d=>d.status!=='offline').length;
  $('#metric-pending').textContent=state.orders.filter(o=>o.status==='pending').length;
  $('#metric-active').textContent=state.orders.filter(o=>['offered','accepted','arrived','in_progress'].includes(o.status)).length;
@@ -22,16 +61,20 @@ function draw(){
   const driver=state.drivers.find(d=>d.id===order.driver_id);
   if(driver&&['accepted','arrived','in_progress'].includes(order.status)){
    const x=order.status==='in_progress'?order.dropoff_x:order.pickup_x,y=order.status==='in_progress'?order.dropoff_y:order.pickup_y;
-   $('#route-layer').append(svg('path',{d:`M${driver.x*10},${driver.y*7.6} L${x*10},${y*7.6}`,stroke:'#a3ba74','stroke-width':3,'stroke-dasharray':'7 7',fill:'none'}));
+   const route=planRoute(driver,{x,y},city);
+   $('#route-layer').append(svg('path',{d:route.map((p,i)=>`${i?'L':'M'}${p.x*10},${p.y*10}`).join(' '),stroke:order.status==='in_progress'?'#6c9847':'#b29b47','stroke-width':5,'stroke-dasharray':'12 9',fill:'none','data-order-id':order.id}));
+   $('#order-layer').append(svg('circle',{cx:x*10,cy:y*10,r:10,fill:order.status==='in_progress'?'#719b3e':'#d1a445',stroke:'white','stroke-width':3}));
   }
   if(order.status==='pending'||order.status==='offered'){
-   const g=svg('g');g.append(svg('circle',{cx:order.pickup_x*10,cy:order.pickup_y*7.6,r:17,fill:'#a780b3',opacity:.2,class:'pulse'}),svg('circle',{cx:order.pickup_x*10,cy:order.pickup_y*7.6,r:6,fill:'#9771ac',stroke:'white','stroke-width':2}));$('#order-layer').append(g);
+   const g=svg('g');g.append(svg('circle',{cx:order.pickup_x*10,cy:order.pickup_y*10,r:22,fill:'#a780b3',opacity:.2,class:'pulse'}),svg('circle',{cx:order.pickup_x*10,cy:order.pickup_y*10,r:9,fill:'#9771ac',stroke:'white','stroke-width':2}));$('#order-layer').append(g);
   }
  }
  for(const driver of state.drivers){
   let marker=markers.get(driver.id);
-  if(!marker){marker=svg('g',{class:'driver-marker',filter:'url(#shadow)'});marker.append(svg('rect',{x:-17,y:-13,width:34,height:26,rx:8}),svg('text',{'text-anchor':'middle',y:4},driver.id.toUpperCase()),svg('text',{'text-anchor':'middle',y:28,class:'driver-label'},driver.name));marker.append(svg('title',{},`${driver.name} · ${driver.class}`));markers.set(driver.id,marker);$('#driver-layer').append(marker);}
-  marker.setAttribute('transform',`translate(${driver.x*10} ${driver.y*7.6})`);marker.querySelector('rect').setAttribute('fill',driver.status==='available'?'#65883f':driver.status==='offered'?'#ae8b3b':'#263f32');
+  if(!marker){marker=svg('g',{class:'driver-marker',filter:'url(#shadow)'});marker.append(svg('rect',{x:-26,y:-18,width:52,height:36,rx:11}),svg('text',{'text-anchor':'middle',y:7},driver.id.toUpperCase()),svg('text',{'text-anchor':'middle',y:40,class:'driver-label'},driver.name));marker.append(svg('title',{},`${driver.name} · ${driver.class}`));markers.set(driver.id,marker);$('#driver-layer').append(marker);}
+  if(!marker.display)marker.display={x:driver.x,y:driver.y};
+  if(!marker.target||marker.target.x!==driver.x||marker.target.y!==driver.y){const path=planRoute(marker.display,driver,city);marker.target={x:driver.x,y:driver.y};marker.motion={path,length:routeLength(path),started:performance.now()};}
+  marker.querySelector('rect').setAttribute('fill',driver.status==='available'?'#65883f':driver.status==='offered'?'#ae8b3b':'#263f32');
  }
  const events=state.events.filter(e=>$('#event-filter').value==='all'||e.service===$('#event-filter').value);
  $('#events').replaceChildren();
@@ -61,7 +104,12 @@ $('#simulation-toggle').onclick=()=>simulation(!settings.running);$('#scenario')
 $('#event-filter').onchange=draw;
 document.querySelectorAll('[data-filter]').forEach(btn=>btn.onclick=()=>{filter=btn.dataset.filter;document.querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('active',b===btn));draw();});
 $('#pick-map').onclick=()=>{picking='pickup';$('#order-dialog').close();$('#map-hint').textContent='Нажмите на карту: точка подачи';$('#map').style.cursor='crosshair';};
-$('#map').onclick=e=>{if(!picking)return;const point=$('#map').createSVGPoint();point.x=e.clientX;point.y=e.clientY;const p=point.matrixTransform($('#map').getScreenCTM().inverse());const x=Math.max(5,Math.min(95,Math.round(p.x/10))),y=Math.max(5,Math.min(95,Math.round(p.y/7.6)));const form=$('#order-form');form.elements[picking+'_x'].value=x;form.elements[picking+'_y'].value=y;if(picking==='pickup'){picking='dropoff';$('#map-hint').textContent='Теперь нажмите: точка назначения';}else{picking=null;$('#map').style.cursor='';$('#map-hint').textContent='Маршрут выбран на карте';$('#order-dialog').showModal();}};
+$('#map').onclick=e=>{if(dragged){dragged=false;return;}if(!picking||!city)return;const point=$('#map').createSVGPoint();point.x=e.clientX;point.y=e.clientY;const p=point.matrixTransform($('#map').getScreenCTM().inverse());const {x,y}=snapRoad({x:Math.max(city.min_x,Math.min(city.max_x,p.x/10)),y:Math.max(city.min_y,Math.min(city.max_y,p.y/10))},city);const form=$('#order-form');form.elements[picking+'_x'].value=x;form.elements[picking+'_y'].value=y;if(picking==='pickup'){picking='dropoff';$('#map-hint').textContent='Теперь нажмите: точка назначения';}else{picking=null;$('#map').style.cursor='';$('#map-hint').textContent='Маршрут выбран на карте';$('#order-dialog').showModal();}};
+$('#zoom-in').onclick=()=>changeZoom(1.4);$('#zoom-out').onclick=()=>changeZoom(1/1.4);$('#zoom-fit').onclick=()=>{zoom=1;view={x:0,y:0};setView();};
+$('#map-fullscreen').onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await $('.map-panel').requestFullscreen();}catch{toast('Полноэкранный режим недоступен в этом браузере');}};
+$('#map').addEventListener('pointerdown',e=>{if(picking||!city)return;drag={x:e.clientX,y:e.clientY,view:{...view}};dragged=false;$('#map').setPointerCapture(e.pointerId);});
+$('#map').addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.hypot(dx,dy)>4)dragged=true;const scale=$('#map').getScreenCTM().a;view.x=drag.view.x-dx/scale;view.y=drag.view.y-dy/scale;setView();});
+$('#map').addEventListener('pointerup',()=>{drag=null;});$('#map').addEventListener('pointercancel',()=>{drag=null;});
 setInterval(()=>$('#clock').textContent=new Date().toLocaleTimeString('ru-RU'),1000);
 setInterval(()=>{if(!document.hidden)refresh();},1500);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh();});

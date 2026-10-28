@@ -1,0 +1,10 @@
+{
+  "width": 200,
+  "height": 140,
+  "min_x": 5,
+  "max_x": 195,
+  "min_y": 5,
+  "max_y": 135,
+  "street_step": 10,
+  "speed": 1.2
+}

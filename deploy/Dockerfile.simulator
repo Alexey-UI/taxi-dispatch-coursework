@@ -1,7 +1,8 @@
 FROM node:24-alpine
 ENV NODE_ENV=production
 WORKDIR /app
-COPY --chown=node:node simulator ./
+COPY --chown=node:node simulator ./simulator
+COPY --chown=node:node web/roads.mjs ./web/roads.mjs
 USER node
 EXPOSE 8090
-CMD ["node","main.mjs"]
+CMD ["node","simulator/main.mjs"]

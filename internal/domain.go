@@ -10,7 +10,7 @@ var ErrConflict = errors.New("действие недоступно в теку�
 func Distance(x1, y1, x2, y2 float64) float64 { return math.Hypot(x1-x2, y1-y2) }
 
 func ValidPoint(x, y float64) bool {
-	return !math.IsNaN(x) && !math.IsNaN(y) && x >= 5 && x <= 95 && y >= 5 && y <= 95
+	return !math.IsNaN(x) && !math.IsNaN(y) && x >= City.MinX && x <= City.MaxX && y >= City.MinY && y <= City.MaxY
 }
 
 func NextState(state, action string) (string, error) {

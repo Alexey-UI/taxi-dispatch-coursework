@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import http from 'node:http';
+import {onRoad} from '../web/roads.mjs';
 import {readFile} from 'node:fs/promises';
 const env=Object.fromEntries((await readFile(new URL('../.env',import.meta.url),'utf8')).trim().split('\n').map(s=>{const i=s.indexOf('=');return [s.slice(0,i),s.slice(i+1)];}));
 const base=process.env.BASE_URL||`http://127.0.0.1:${env.PORT||8088}`;
@@ -25,6 +26,8 @@ try{
  const cookies={Cookie:guest.cookie};
  await request('/orders',{pickup_x:0,pickup_y:20,dropoff_x:70,dropoff_y:70,class:'economy'},cookies,400);
  const initial=await state();
+ assert.equal(initial.city.width,200);assert.equal(initial.city.height,140);
+ assert.ok(initial.drivers.every(d=>onRoad(d,initial.city)),'all drivers must start on streets');
  assert.ok(initial.drivers.filter(d=>d.status==='available').length>=7,'Smoke needs an idle test environment: at least 7 available drivers');
  assert.ok(initial.drivers.filter(d=>d.class==='comfort'&&d.status==='available').length>=2,'Smoke needs at least 2 available comfort drivers');
  const target=initial.drivers.find(d=>d.class==='comfort'&&d.status==='available');assert.ok(target,'free comfort driver');
