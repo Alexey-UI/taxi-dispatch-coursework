@@ -2,6 +2,7 @@
 
 - [Требования](requirements.md)
 - [Архитектура](architecture.md)
+- [Дороги и расширенная карта](roads.md)
 - [Эксплуатация](operations.md)
 - [Проверки](validation.md)
 - [Облако и HTTPS](cloud.md)
