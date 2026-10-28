@@ -1,0 +1,90 @@
+{{- range $name := list "api" "dispatcher" "web" "simulator" }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: {{ $name }}
+ labels: {app: {{ $name }}, project: taxi}
+spec:
+ replicas: {{ if eq $name "simulator" }}1{{ else }}{{ index $.Values.replicas $name }}{{ end }}
+ {{- if eq $name "simulator" }}
+ strategy: {type: Recreate}
+ {{- end }}
+ selector:
+  matchLabels: {app: {{ $name }}, project: taxi}
+ template:
+  metadata:
+   labels: {app: {{ $name }}, project: taxi}
+   annotations:
+    checksum/config: {{ include (print $.Template.BasePath "/config.yaml") $ | sha256sum }}
+  spec:
+   automountServiceAccountToken: false
+   securityContext:
+    runAsNonRoot: true
+    runAsUser: {{ if eq $name "web" }}101{{ else if eq $name "simulator" }}1000{{ else }}10001{{ end }}
+    seccompProfile: {type: RuntimeDefault}
+   {{- if ne $name "simulator" }}
+   topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: kubernetes.io/hostname
+      whenUnsatisfiable: ScheduleAnyway
+      labelSelector:
+       matchLabels: {app: {{ $name }}, project: taxi}
+   {{- end }}
+   containers:
+    - name: {{ $name }}
+      image: {{ if or (eq $name "api") (eq $name "dispatcher") }}{{ $.Values.images.app | quote }}{{ else }}{{ index $.Values.images $name | quote }}{{ end }}
+      imagePullPolicy: {{ $.Values.images.pullPolicy }}
+      securityContext:
+       allowPrivilegeEscalation: false
+       readOnlyRootFilesystem: true
+       capabilities: {drop: [ALL]}
+      resources:
+       {{- toYaml $.Values.resources | nindent 7 }}
+      {{- if ne $name "web" }}
+      envFrom:
+       - secretRef: {name: {{ $.Values.existingSecret }}}
+      env:
+       - {name: SERVICE_ROLE, value: {{ $name | quote }}}
+       - {name: REDIS_ADDR, value: "redis:6379"}
+       - {name: API_URL, value: "http://api:8080"}
+       - {name: COOKIE_SECURE, value: {{ $.Values.cookieSecure | quote }}}
+       - {name: PUBLIC_PARTICIPATION, value: {{ $.Values.publicParticipation | quote }}}
+       - {name: OFFER_TIMEOUT, value: {{ $.Values.offerTimeout | quote }}}
+      {{- end }}
+      {{- if ne $name "dispatcher" }}
+      ports:
+       - {containerPort: {{ if eq $name "simulator" }}8090{{ else }}8080{{ end }}, name: http}
+      startupProbe:
+       httpGet: {path: {{ if eq $name "api" }}/readyz{{ else }}/healthz{{ end }}, port: http}
+       failureThreshold: 40
+       periodSeconds: 3
+      readinessProbe:
+       httpGet: {path: {{ if eq $name "api" }}/readyz{{ else }}/healthz{{ end }}, port: http}
+       periodSeconds: 5
+      livenessProbe:
+       httpGet: {path: /healthz, port: http}
+       periodSeconds: 10
+      {{- end }}
+      {{- if eq $name "web" }}
+      volumeMounts:
+       - {name: tmp, mountPath: /tmp}
+       - {name: nginx, mountPath: /etc/nginx/nginx.conf, subPath: nginx.conf, readOnly: true}
+      {{- end }}
+   {{- if eq $name "web" }}
+   volumes:
+    - {name: tmp, emptyDir: {}}
+    - name: nginx
+      configMap: {name: taxi-nginx}
+   {{- end }}
+{{- end }}
+{{- range $name := list "api" "web" }}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: {{ $name }}}
+spec:
+ selector: {app: {{ $name }}, project: taxi}
+ ports:
+  - {name: http, port: 8080, targetPort: http}
+{{- end }}

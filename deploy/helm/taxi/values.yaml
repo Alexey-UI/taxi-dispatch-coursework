@@ -1,0 +1,30 @@
+images:
+ app: taxi-app:local
+ web: taxi-web:local
+ simulator: taxi-simulator:local
+ pullPolicy: IfNotPresent
+replicas:
+ api: 2
+ dispatcher: 2
+ web: 2
+existingSecret: taxi-secrets
+cookieSecure: false
+publicParticipation: true
+offerTimeout: 12s
+storage:
+ size: 2Gi
+ className: local-path
+ingress:
+ enabled: true
+ host: taxi.localhost
+ tls: false
+ tlsSecretName: taxi-tls
+networkPolicy:
+ enabled: true
+resources:
+ requests:
+  cpu: 50m
+  memory: 48Mi
+ limits:
+  cpu: 500m
+  memory: 256Mi

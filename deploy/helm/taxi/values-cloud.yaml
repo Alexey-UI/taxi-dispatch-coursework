@@ -1,0 +1,10 @@
+# Replace before using. The chart never creates cloud resources or real secrets.
+images:
+ app: ghcr.io/REPLACE_OWNER/taxi-dispatch-app:REPLACE_SHA
+ web: ghcr.io/REPLACE_OWNER/taxi-dispatch-web:REPLACE_SHA
+ simulator: ghcr.io/REPLACE_OWNER/taxi-dispatch-simulator:REPLACE_SHA
+cookieSecure: true
+ingress:
+ host: REPLACE_DOMAIN
+ tls: true
+ tlsSecretName: taxi-tls

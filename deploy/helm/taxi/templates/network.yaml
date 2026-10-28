@@ -1,0 +1,68 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+ name: taxi
+ {{- if .Values.ingress.tls }}
+ annotations:
+  cert-manager.io/cluster-issuer: letsencrypt
+ {{- end }}
+spec:
+ ingressClassName: traefik
+ {{- if .Values.ingress.tls }}
+ tls:
+  - hosts: [{{ .Values.ingress.host | quote }}]
+    secretName: {{ .Values.ingress.tlsSecretName }}
+ {{- end }}
+ rules:
+  - host: {{ .Values.ingress.host | quote }}
+    http:
+     paths:
+      - path: /
+        pathType: Prefix
+        backend:
+         service: {name: web, port: {number: 8080}}
+{{- end }}
+{{- if .Values.networkPolicy.enabled }}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: taxi-default-deny}
+spec:
+ podSelector: {}
+ policyTypes: [Ingress, Egress]
+ egress:
+  - to:
+     - namespaceSelector:
+        matchLabels: {kubernetes.io/metadata.name: kube-system}
+    ports: [{protocol: UDP, port: 53}, {protocol: TCP, port: 53}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: taxi-internal}
+spec:
+ podSelector:
+  matchLabels: {project: taxi}
+ policyTypes: [Ingress, Egress]
+ ingress:
+  - from:
+     - podSelector:
+        matchLabels: {project: taxi}
+ egress:
+  - to:
+     - podSelector:
+        matchLabels: {project: taxi}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: taxi-web-ingress}
+spec:
+ podSelector:
+  matchLabels: {app: web, project: taxi}
+ policyTypes: [Ingress]
+ ingress:
+  - from:
+     - namespaceSelector:
+        matchLabels: {kubernetes.io/metadata.name: kube-system}
+    ports: [{port: 8080, protocol: TCP}]
+{{- end }}

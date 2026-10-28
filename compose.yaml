@@ -1,0 +1,110 @@
+name: taxi-dispatch
+x-app: &app
+ build:
+  context: .
+  dockerfile: deploy/Dockerfile.backend
+ image: taxi-app:local
+ restart: unless-stopped
+ environment: &app-env
+  DATABASE_URL: postgres://taxi:${POSTGRES_PASSWORD:?Run node scripts/setup.mjs}@postgres:5432/taxi?sslmode=disable
+  REDIS_ADDR: redis:6379
+  SESSION_KEY: ${SESSION_KEY:?Run node scripts/setup.mjs}
+  SERVICE_KEY: ${SERVICE_KEY:?Run node scripts/setup.mjs}
+  DEMO_PASSWORD: ${DEMO_PASSWORD:?Run node scripts/setup.mjs}
+  COOKIE_SECURE: "false"
+  PUBLIC_PARTICIPATION: "true"
+  OFFER_TIMEOUT: 12s
+ depends_on:
+  postgres:
+   condition: service_healthy
+  redis:
+   condition: service_healthy
+ networks: [backend]
+ security_opt: [no-new-privileges:true]
+ cap_drop: [ALL]
+ read_only: true
+ tmpfs: [/tmp]
+ logging:
+  driver: json-file
+  options: {max-size: "10m", max-file: "3"}
+services:
+ postgres:
+  image: postgres:17-alpine
+  restart: unless-stopped
+  environment:
+   POSTGRES_DB: taxi
+   POSTGRES_USER: taxi
+   POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Run node scripts/setup.mjs}
+  volumes: [postgres-data:/var/lib/postgresql/data]
+  networks: [backend]
+  healthcheck:
+   test: [CMD-SHELL, "pg_isready -U taxi -d taxi"]
+   interval: 3s
+   timeout: 3s
+   retries: 20
+  logging: {driver: json-file, options: {max-size: "10m", max-file: "3"}}
+ redis:
+  image: redis:7.4-alpine
+  command: [redis-server, --save, "", --appendonly, "no"]
+  restart: unless-stopped
+  networks: [backend]
+  healthcheck:
+   test: [CMD, redis-cli, ping]
+   interval: 3s
+   timeout: 2s
+   retries: 20
+  logging: {driver: json-file, options: {max-size: "10m", max-file: "3"}}
+ api:
+  <<: *app
+  healthcheck:
+   test: [CMD, wget, -q, --spider, http://127.0.0.1:8080/readyz]
+   interval: 5s
+   timeout: 3s
+   retries: 20
+ dispatcher:
+  <<: *app
+  environment:
+   <<: *app-env
+   SERVICE_ROLE: dispatcher
+ simulator:
+  build: {context: ., dockerfile: deploy/Dockerfile.simulator}
+  image: taxi-simulator:local
+  restart: unless-stopped
+  environment:
+   API_URL: http://api:8080
+   SERVICE_KEY: ${SERVICE_KEY:?Run node scripts/setup.mjs}
+  depends_on:
+   api: {condition: service_healthy}
+  networks: [backend]
+  read_only: true
+  security_opt: [no-new-privileges:true]
+  cap_drop: [ALL]
+  healthcheck:
+   test: [CMD, node, -e, "fetch('http://127.0.0.1:8090/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+   interval: 10s
+   timeout: 3s
+   retries: 5
+  logging: {driver: json-file, options: {max-size: "10m", max-file: "3"}}
+ web:
+  build: {context: ., dockerfile: deploy/Dockerfile.web}
+  image: taxi-web:local
+  restart: unless-stopped
+  ports: ["127.0.0.1:${PORT:-8088}:8080"]
+  depends_on:
+   api: {condition: service_healthy}
+  networks: [edge, backend]
+  read_only: true
+  tmpfs: [/tmp]
+  cap_drop: [ALL]
+  security_opt: [no-new-privileges:true]
+  healthcheck:
+   test: [CMD, wget, -q, --spider, http://127.0.0.1:8080/healthz]
+   interval: 5s
+   timeout: 3s
+   retries: 10
+  logging: {driver: json-file, options: {max-size: "10m", max-file: "3"}}
+networks:
+ edge: {}
+ backend: {internal: true}
+volumes:
+ postgres-data: {}

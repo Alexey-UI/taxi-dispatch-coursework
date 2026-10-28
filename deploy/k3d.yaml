@@ -1,0 +1,17 @@
+apiVersion: k3d.io/v1alpha5
+kind: Simple
+metadata:
+ name: taxi
+servers: 1
+agents: 2
+image: rancher/k3s:v1.35.2-k3s1
+ports:
+ - port: 8089:80
+   nodeFilters: [loadbalancer]
+options:
+ k3d:
+  wait: true
+  timeout: 180s
+ kubeconfig:
+  updateDefaultKubeconfig: false
+  switchCurrentContext: false
