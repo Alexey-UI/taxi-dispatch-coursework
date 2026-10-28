@@ -66,3 +66,19 @@ spec:
         matchLabels: {kubernetes.io/metadata.name: kube-system}
     ports: [{port: 8080, protocol: TCP}]
 {{- end }}
+
+{{- if .Values.networkPolicy.enabled }}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: taxi-acme-solver}
+spec:
+ podSelector:
+  matchLabels: {acme.cert-manager.io/http01-solver: "true"}
+ policyTypes: [Ingress]
+ ingress:
+  - from:
+     - namespaceSelector:
+        matchLabels: {kubernetes.io/metadata.name: kube-system}
+    ports: [{port: 8089, protocol: TCP}]
+{{- end }}

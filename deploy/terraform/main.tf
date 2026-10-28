@@ -33,7 +33,7 @@ resource "yandex_vpc_subnet" "taxi" {
   name           = "taxi-subnet"
   zone           = var.zone
   network_id     = yandex_vpc_network.taxi.id
-  v4_cidr_blocks = ["10.42.0.0/24"]
+  v4_cidr_blocks = ["10.80.0.0/24"]
 }
 resource "yandex_vpc_security_group" "taxi" {
   name       = "taxi-web"
