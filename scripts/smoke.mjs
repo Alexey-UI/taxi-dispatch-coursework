@@ -13,6 +13,10 @@ async function request(path,body,headers={},expected=200){
 }
 async function state(){return (await request('/state')).data;}
 async function waitFor(fn,timeout=20000){const end=Date.now()+timeout;while(Date.now()<end){const s=await state();const value=fn(s);if(value)return value;await new Promise(r=>setTimeout(r,300));}throw new Error('Timeout waiting for state');}
+// Helm waits for application pods; the ingress controller can become ready later.
+// Poll a read-only route before starting mutations; never retry POST blindly.
+const edgeDeadline=Date.now()+60000;
+while(true){try{await state();break;}catch(err){if(Date.now()>edgeDeadline)throw err;await new Promise(r=>setTimeout(r,500));}}
 const created=[];
 try{
  await request('/simulation',{running:false,scenario:'normal'},service);
