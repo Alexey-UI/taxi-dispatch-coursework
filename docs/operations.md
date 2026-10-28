@@ -1,0 +1,60 @@
+# Эксплуатация и демонстрация
+
+## Демонстрация за пять минут
+1. Откройте интерфейс без входа: карта и публичные события доступны наблюдателю.
+2. Войдите как диспетчер с DEMO_PASSWORD из локального `.env`, запустите обычный поток.
+3. Покажите путь заказа, движение машин и события api/dispatcher. Объясните ближайшего подходящего водителя.
+4. Переключите сценарий на отказы: покажите новый driver_id. Затем дефицит: отвечают d1/d2, остальные предложения истекают. Всплеск создаёт очереди, но не дублирует активные назначения.
+5. Приостановите симуляцию. Создайте гостевой заказ в другом браузере. Войдите водителем, которому он назначен, и вручную примите, отметьте прибытие, начало и завершение.
+6. Покажите Compose либо `kubectl get pods -n taxi -o wide`, реплики и служебные логи.
+
+Симуляция управляется глобально: её изменение видно всем посетителям. Пауза останавливает генерацию и автоматические ответы/движение, но dispatcher продолжает назначать заказы и обрабатывать тайм-ауты. Для ручного принятия успейте ответить за 12 секунд либо временно увеличьте OFFER_TIMEOUT.
+
+## Логи
+```sh
+docker compose logs -f --tail=100 api dispatcher simulator web
+docker compose logs --since=10m dispatcher
+kubectl logs -n taxi -l app=api --prefix --tail=100 --max-log-requests=10
+kubectl logs -n taxi -l app=dispatcher --prefix --tail=100 --max-log-requests=10
+kubectl logs -n taxi POD_NAME --previous
+kubectl describe pod -n taxi POD_NAME
+kubectl get events -n taxi --sort-by=.metadata.creationTimestamp
+```
+
+API пишет method, path, duration_ms и request_id. Dispatcher — kind и order_id. Simulator — сценарий и ID созданного заказа. Nginx — код ответа и длительность. Лента интерфейса хранится в events и позволяет фильтровать доменные события по сервису; она не является полным сборщиком stdout контейнеров. Сообщение до SQL commit отражает попытку операции, достоверный доменный журнал — зафиксированная строка events. Compose ограничивает файлы логов 10 МБ × 3 на контейнер.
+
+## Резервное копирование
+В Bash: `sh scripts/backup.sh`. Универсальная команда внутри контейнера:
+```sh
+docker compose exec postgres pg_dump -U taxi -d taxi -Fc -f /tmp/taxi.dump
+docker compose cp postgres:/tmp/taxi.dump artifacts/taxi.dump
+```
+Папку artifacts предварительно создайте. Дамп содержит состояние заказов; храните его вне публичного репозитория.
+
+Проверяйте восстановление в отдельную БД, чтобы не затирать рабочую:
+```sh
+docker compose exec postgres createdb -U taxi taxi_restore
+docker compose cp artifacts/taxi.dump postgres:/tmp/restore.dump
+docker compose exec postgres pg_restore -U taxi -d taxi_restore --no-owner /tmp/restore.dump
+docker compose exec postgres psql -U taxi -d taxi_restore -c "SELECT count(*) FROM orders;"
+```
+Существующий volume не заменяет бэкап. Один дамп на том же диске не защищает от потери диска. Для облака копируйте дампы на независимое хранилище и задайте срок хранения. Удаление тестовой БД — отдельное осознанное действие после проверки.
+
+## Отказы
+Для отказа Redis: `docker compose stop redis`, затем создайте заказ и посмотрите предложение водителю; восстановите `docker compose start redis`. Для рестарта API используйте `docker compose restart api`. Данные должны сохраниться, текущий HTTP-запрос может потребовать повторения. Повторный create сейчас не имеет idempotency key и может создать второй заказ; клиент не повторяет POST автоматически.
+
+В Kubernetes удалите один Pod API и дождитесь новой реплики: `kubectl delete pod -n taxi POD_NAME`; `kubectl rollout status deployment/api -n taxi`. Не удаляйте PVC для проверки рестарта. Удаление узла с local-path PostgreSQL может лишить БД доступности: это известное ограничение.
+
+## Диагностика
+| Симптом | Проверка | Частая причина |
+|---|---|---|
+| 404 на 8089 | Host taxi.localhost, Ingress | Запрос пришёл с другим именем |
+| 502 | API readiness и логи web | Бэкенд не готов или недоступен |
+| 429 | Число запросов, активные заказы | Ограничение Nginx/приёма заказов |
+| Pending у Pod | describe и PVC | Ресурсы или хранилище |
+| ImagePullBackOff | Образ и registry access | Неверный тег/приватный пакет |
+| Ожидает заказ | Свободные водители, класс, attempts | Дефицит или недавний отказ |
+| Вход пропадает в облаке | Secure cookie, HTTPS, SESSION_KEY реплик | HTTP вместо HTTPS или разные ключи |
+
+## Данные и очистка
+Events/orders накапливаются. Перед долгим публичным запуском задайте регламент архивации завершённых заказов и событий, лимит размера диска и проверку бэкапов. Это операционное ограничение учебного стенда. Не предоставляйте публичный shell или API чтения произвольных лог-файлов.
