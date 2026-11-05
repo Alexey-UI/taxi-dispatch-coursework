@@ -18,4 +18,5 @@ courses/
 
 .~lock.*#
 report/output/*.tmp
+__pycache__/
 ~$*
