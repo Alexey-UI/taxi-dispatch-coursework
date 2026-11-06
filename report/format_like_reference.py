@@ -178,8 +178,10 @@ def main():
     headings.clear()  # Reference TOC starts at terms, not at the abstract.
     text(text_of(source_paragraphs[53]), 53)
     text(f'{author_short}, Курсовая работа направления подготовки «Программная инженерия» на тему «{SUBJECT}»: М. 2026 г., МИРЭА – Российский технологический университет (РТУ МИРЭА), Институт информационных технологий (ИИТ), кафедра инструментального и прикладного программного обеспечения', 54)
-    text(f'(ИиППО) – {args.pages} с., 1 кн., 5 рис., 5 табл., 14 ист., 2 прил.', 55)
     markdown = (ROOT / 'report.md').read_text()
+    bibliography = markdown.split('# СПИСОК ИСПОЛЬЗОВАННЫХ ИСТОЧНИКОВ', 1)[1].split('# ПРИЛОЖЕНИЕ', 1)[0]
+    source_count = len(re.findall(r'^\d+\. ', bibliography, flags=re.MULTILINE))
+    text(f'(ИиППО) – {args.pages} с., 1 кн., 5 рис., 5 табл., {source_count} ист., 2 прил.', 55)
     abstract = markdown.split('# ТЕРМИНЫ И ОПРЕДЕЛЕНИЯ', 1)[0].split('\n\n')
     keyword = next(s for s in abstract if s.startswith('Ключевые слова:'))
     text(keyword.removeprefix('Ключевые слова: ').rstrip('.'), 56)
