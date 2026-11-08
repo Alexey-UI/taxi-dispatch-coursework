@@ -1,6 +1,8 @@
-"""Build editable coursework and slides. Dependencies: python-docx, python-pptx, Pillow.
+"""Build legacy coursework. Dependencies: python-docx, Pillow.
 
 Run from anywhere: python report/build.py. PDFs are exported separately by LibreOffice.
+Use format_like_reference.py for the current coursework layout.
+Use update_slides.mjs for the current presentation.
 No personal details or secrets are read by this generator.
 """
 from pathlib import Path
@@ -15,9 +17,6 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.section import WD_SECTION_START
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
-from pptx import Presentation
-from pptx.util import Inches, Pt as SlidePt
-from pptx.dml.color import RGBColor
 
 ROOT = Path(__file__).resolve().parent
 ASSETS = ROOT / 'assets'
@@ -187,58 +186,5 @@ for line in ['Приложение: проект листа задания на 
     application.add_paragraph(line)
 application.save(OUT/'Заявление_на_тему.docx')
 
-prs=Presentation();prs.slide_width=Inches(13.333);prs.slide_height=Inches(7.5)
-def slide(title,body=None,image=None,note=''):
-    s=prs.slides.add_slide(prs.slide_layouts[6]);s.background.fill.solid();s.background.fill.fore_color.rgb=RGBColor.from_string('F5F6F0')
-    shape=s.shapes.add_textbox(Inches(.6), Inches(.45), Inches(12), Inches(.85));tf=shape.text_frame;tf.text=title
-    tf.paragraphs[0].font.size=SlidePt(29);tf.paragraphs[0].font.bold=True;tf.paragraphs[0].font.color.rgb=RGBColor.from_string('213321')
-    if image:
-        img=Image.open(ASSETS/image);ratio=img.width/img.height
-        w=min(12,5.55*ratio);h=w/ratio
-        s.shapes.add_picture(str(ASSETS/image), Inches((13.333-w)/2), Inches(1.4),width=Inches(w),height=Inches(h))
-    if body:
-        box=s.shapes.add_textbox(Inches(.8),Inches(1.8),Inches(11.7),Inches(4.9));box.text_frame.word_wrap=True
-        for j,line in enumerate(body):
-            para=box.text_frame.paragraphs[0] if j==0 else box.text_frame.add_paragraph();para.text=line;para.font.size=SlidePt(23);para.space_after=SlidePt(22);para.font.color.rgb=RGBColor.from_string('33442D')
-    footer=s.shapes.add_textbox(Inches(.6),Inches(7.12),Inches(12),Inches(.25));footer.text_frame.text=f'РТУ МИРЭА · Тактика · 2026                                                               {len(prs.slides):02}'
-    footer.text_frame.paragraphs[0].font.size=SlidePt(10)
-    s.notes_slide.notes_text_frame.text=note
-
-slide('Настройка и администрирование системы такси',[
- 'Система автоматической обработки и распределения заказов «Тактика»',
- 'Дисциплина: Настройка и администрирование сервисного ПО',
- 'Студент: __________________   Группа: __________',
- 'Руководитель: __________________',
- 'МИНОБРНАУКИ РОССИИ · РТУ МИРЭА · ИТ · ИиППО · Москва, 2026'
-],note='Представить тему. До сдачи заполнить данные автора и руководителя.')
-slide('Цель и задачи',[
- 'Разработать и настроить воспроизводимый стенд распределения заказов.',
- 'Выбор ближайшего водителя, отказы, тайм-ауты и целостность состояния.',
- 'Контейнеризация, кластер, сеть и автоматизированная доставка.',
- 'Проверка штатных сценариев, восстановления и работающие инструкции.'
-],note='Около 25 секунд: акцент на настройке и эксплуатации, бизнес-функции ограничены.')
-slide('Анализ предметной области',[
- 'Такси-Мастер: комплексные роли и правила распределения.',
- 'Яндекс Про: автоматический подбор с учётом требований и приоритета.',
- 'Учебная модель: доступность + класс + расстояние; явные переходы.',
- 'Граница: синтетический город, без оплаты и дорожного графа.'
-],note='Около 30 секунд. Не утверждать знание закрытого стека коммерческих аналогов.')
-slide('Технологический комплекс',[
- 'Go: HTTP API и отдельный dispatcher. JavaScript: интерфейс.',
- 'Node.js: воспроизводимые сценарии и движение автомобилей.',
- 'PostgreSQL: источник истины. Redis: ускоряющее уведомление.',
- 'Nginx · Docker Compose · K3s/k3d · Helm · GitHub Actions.'
-],note='Около 30 секунд. Объяснить осмысленную роль каждого компонента.')
-slide('Структура и взаимодействие',image='architecture.png',note='Около 35 секунд. Внешний вход только web; общий SQL и ограниченные Redis-сигналы.')
-slide('Распределение и жизненный цикл',image='lifecycle.png',note='Около 35 секунд. Блокировки и уникальный индекс запрещают двойное назначение; отказ возвращает поиск.')
-slide('Демонстрация работающей системы',image='desktop.png',note='Около 50 секунд. Показать карту, сценарии и события. При живом показе проследить один заказ.')
-slide('CI/CD: реальная проверка доставки',image='pipeline.png',note='Около 35 секунд. Успешный run 40655602805; облачная ВМ пока не развёрнута.')
-slide('Результаты и границы',[
- 'Шесть компонентов Compose; кластер из трёх локальных узлов.',
- 'Проверены два dispatcher, отказы, тайм-ауты и работа без Redis.',
- 'Подтверждены восстановление API-подов и SQL-дампа.',
- 'CI/CD выполнен; образы опубликованы для amd64 и arm64.',
- 'Ограничения: одиночная БД и хост. Домен/HTTPS подготовлены к облаку.'
-],note='Около 25 секунд. Ссылка на исходники: github.com/Alexey-UI/taxi-dispatch-coursework.')
-prs.save(OUT/'Презентация_Тактика.pptx')
-print('Built DOCX and PPTX:',OUT)
+print('Built legacy DOCX files:', OUT)
+print('Update slides separately with report/update_slides.mjs.')
