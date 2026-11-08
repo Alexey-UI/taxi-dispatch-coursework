@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2200 1490" width="2200" height="1490">
+<rect width="100%" height="100%" fill="white"/>
+<rect x="700" y="40" width="760" height="135" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="1080.0" y="94.36" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">pending</text>
+<text x="1080.0" y="155.32" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">Ожидание назначения</text>
+<rect x="700" y="260" width="760" height="135" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="1080.0" y="314.36" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">offered</text>
+<text x="1080.0" y="375.32" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">Предложение водителю</text>
+<rect x="700" y="480" width="760" height="135" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="1080.0" y="534.36" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">accepted</text>
+<text x="1080.0" y="595.32" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">Движение к подаче</text>
+<rect x="700" y="700" width="760" height="135" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="1080.0" y="754.36" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">arrived</text>
+<text x="1080.0" y="815.32" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">Ожидание пассажира</text>
+<rect x="700" y="920" width="760" height="135" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="1080.0" y="974.36" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">in_progress</text>
+<text x="1080.0" y="1035.32" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">Поездка</text>
+<rect x="700" y="1140" width="760" height="135" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="1080.0" y="1194.36" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">completed</text>
+<text x="1080.0" y="1255.32" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">Завершение</text>
+<polyline points="1080,175 1080,260" fill="none" stroke="#151515" stroke-width="3"/>
+<polygon points="1080,260 1070.629331768548,240.0954634091608 1089.370668231452,240.0954634091608" fill="#151515"/>
+<rect x="947.51171875" y="189.05" width="264.9765625" height="55.9" fill="white" stroke="white" stroke-width="0"/>
+<text x="1080" y="231.62" font-family="Arial, sans-serif" font-size="43" font-weight="400" text-anchor="middle" fill="#151515">Назначение</text>
+<polyline points="1080,395 1080,480" fill="none" stroke="#151515" stroke-width="3"/>
+<polygon points="1080,480 1070.629331768548,460.0954634091608 1089.370668231452,460.0954634091608" fill="#151515"/>
+<rect x="1004.5" y="409.05" width="151.0" height="55.9" fill="white" stroke="white" stroke-width="0"/>
+<text x="1080" y="451.62" font-family="Arial, sans-serif" font-size="43" font-weight="400" text-anchor="middle" fill="#151515">accept</text>
+<polyline points="1080,615 1080,700" fill="none" stroke="#151515" stroke-width="3"/>
+<polygon points="1080,700 1070.629331768548,680.0954634091609 1089.370668231452,680.0954634091609" fill="#151515"/>
+<rect x="1014.0" y="629.05" width="132.0" height="55.9" fill="white" stroke="white" stroke-width="0"/>
+<text x="1080" y="671.62" font-family="Arial, sans-serif" font-size="43" font-weight="400" text-anchor="middle" fill="#151515">arrive</text>
+<polyline points="1080,835 1080,920" fill="none" stroke="#151515" stroke-width="3"/>
+<polygon points="1080,920 1070.629331768548,900.0954634091609 1089.370668231452,900.0954634091609" fill="#151515"/>
+<rect x="1026.0" y="849.05" width="108.0" height="55.9" fill="white" stroke="white" stroke-width="0"/>
+<text x="1080" y="891.62" font-family="Arial, sans-serif" font-size="43" font-weight="400" text-anchor="middle" fill="#151515">start</text>
+<polyline points="1080,1055 1080,1140" fill="none" stroke="#151515" stroke-width="3"/>
+<polygon points="1080,1140 1070.629331768548,1120.0954634091609 1089.370668231452,1120.0954634091609" fill="#151515"/>
+<rect x="980.5" y="1069.05" width="199.0" height="55.9" fill="white" stroke="white" stroke-width="0"/>
+<text x="1080" y="1111.62" font-family="Arial, sans-serif" font-size="43" font-weight="400" text-anchor="middle" fill="#151515">complete</text>
+<polyline points="700,327 360,327 360,107 700,107" fill="none" stroke="#151515" stroke-width="3"/>
+<polygon points="700,107 680.0954634091609,116.37066823145199 680.0954634091609,97.62933176854801" fill="#151515"/>
+<rect x="167.5078125" y="402.7" width="364.984375" height="54.6" fill="white" stroke="white" stroke-width="0"/>
+<text x="350" y="444.28" font-family="Arial, sans-serif" font-size="42" font-weight="400" text-anchor="middle" fill="#151515">decline / тайм-аут</text>
+<polyline points="1460,107 1860,107" fill="none" stroke="#151515" stroke-width="3"/>
+<polyline points="1460,327 1860,327" fill="none" stroke="#151515" stroke-width="3"/>
+<polyline points="1460,547 1860,547" fill="none" stroke="#151515" stroke-width="3"/>
+<polyline points="1460,767 1860,767" fill="none" stroke="#151515" stroke-width="3"/>
+<polyline points="1860,107 1860,930" fill="none" stroke="#151515" stroke-width="3"/>
+<polygon points="1860,930 1850.629331768548,910.0954634091609 1869.370668231452,910.0954634091609" fill="#151515"/>
+<rect x="1590" y="930" width="540" height="150" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="1860.0" y="991.86" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">cancelled</text>
+<text x="1860.0" y="1052.82" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">Отмена до поездки</text>
+<rect x="1774.25" y="821.4" width="151.5" height="57.2" fill="white" stroke="white" stroke-width="0"/>
+<text x="1850" y="864.96" font-family="Arial, sans-serif" font-size="44" font-weight="400" text-anchor="middle" fill="#151515">cancel</text>
+<text x="1090" y="1414.96" font-family="Arial, sans-serif" font-size="44" font-weight="400" text-anchor="middle" fill="#151515">После start отмена запрещена; недопустимые действия → HTTP 409</text>
+</svg>

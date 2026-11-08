@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2200 1580" width="2200" height="1580">
+<rect width="100%" height="100%" fill="white"/>
+<rect x="760" y="40" width="680" height="150" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="1100.0" y="101.86" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">Браузер</text>
+<text x="1100.0" y="162.82" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">Наблюдатель и участники</text>
+<rect x="760" y="320" width="680" height="170" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="1100.0" y="391.86" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">Веб-вход</text>
+<text x="1100.0" y="452.82" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">Traefik в K3s → Nginx</text>
+<rect x="760" y="640" width="680" height="150" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="1100.0" y="701.86" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">Go API</text>
+<text x="1100.0" y="762.82" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">HTTP, роли, заказы</text>
+<rect x="40" y="640" width="530" height="150" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="305.0" y="701.86" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">Node.js simulator</text>
+<text x="305.0" y="762.82" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">Поток и движение</text>
+<rect x="210" y="1010" width="680" height="180" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="550.0" y="1086.86" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">PostgreSQL</text>
+<text x="550.0" y="1147.82" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">Заказы, водители, события</text>
+<rect x="1310" y="1010" width="680" height="180" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="1650.0" y="1086.86" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">Redis</text>
+<text x="1650.0" y="1147.82" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">Уведомления о работе</text>
+<rect x="760" y="1370" width="680" height="150" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="1100.0" y="1431.86" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">Go dispatcher</text>
+<text x="1100.0" y="1492.82" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">Назначения и тайм-ауты</text>
+<polyline points="1100,190 1100,320" fill="none" stroke="#151515" stroke-width="3"/>
+<polygon points="1100,320 1090.629331768548,300.0954634091608 1109.370668231452,300.0954634091608" fill="#151515"/>
+<rect x="1031.75" y="227.05" width="136.5" height="55.9" fill="white" stroke="white" stroke-width="0"/>
+<text x="1100" y="269.62" font-family="Arial, sans-serif" font-size="43" font-weight="400" text-anchor="middle" fill="#151515">HTTP</text>
+<polyline points="1100,490 1100,640" fill="none" stroke="#151515" stroke-width="3"/>
+<polygon points="1100,640 1090.629331768548,620.0954634091609 1109.370668231452,620.0954634091609" fill="#151515"/>
+<rect x="991.0078125" y="532.05" width="217.984375" height="55.9" fill="white" stroke="white" stroke-width="0"/>
+<text x="1100" y="574.62" font-family="Arial, sans-serif" font-size="43" font-weight="400" text-anchor="middle" fill="#151515">HTTP /api</text>
+<polyline points="570,715 760,715" fill="none" stroke="#151515" stroke-width="3"/>
+<polygon points="760,715 740.0954634091609,724.370668231452 740.0954634091609,705.629331768548" fill="#151515"/>
+<rect x="596.75" y="642.05" width="136.5" height="55.9" fill="white" stroke="white" stroke-width="0"/>
+<text x="665" y="684.62" font-family="Arial, sans-serif" font-size="43" font-weight="400" text-anchor="middle" fill="#151515">HTTP</text>
+<polyline points="925,790 925,900 550,900 550,1010" fill="none" stroke="#151515" stroke-width="3"/>
+<polygon points="550,1010 540.629331768548,990.0954634091609 559.370668231452,990.0954634091609" fill="#151515"/>
+<rect x="577.51171875" y="872.05" width="284.9765625" height="55.9" fill="white" stroke="white" stroke-width="0"/>
+<text x="720" y="914.62" font-family="Arial, sans-serif" font-size="43" font-weight="400" text-anchor="middle" fill="#151515">SQL / commit</text>
+<polyline points="1275,790 1275,900 1650,900 1650,1010" fill="none" stroke="#151515" stroke-width="3"/>
+<polygon points="1650,1010 1640.629331768548,990.0954634091609 1659.370668231452,990.0954634091609" fill="#151515"/>
+<rect x="1416.5" y="872.05" width="167.0" height="55.9" fill="white" stroke="white" stroke-width="0"/>
+<text x="1500" y="914.62" font-family="Arial, sans-serif" font-size="43" font-weight="400" text-anchor="middle" fill="#151515">LPUSH</text>
+<polyline points="925,1370 925,1290 550,1290 550,1190" fill="none" stroke="#151515" stroke-width="3"/>
+<polygon points="550,1190 559.370668231452,1209.9045365908391 540.629331768548,1209.9045365908391" fill="#151515"/>
+<rect x="534.01171875" y="1262.05" width="371.9765625" height="55.9" fill="white" stroke="white" stroke-width="0"/>
+<text x="720" y="1304.62" font-family="Arial, sans-serif" font-size="43" font-weight="400" text-anchor="middle" fill="#151515">SQL / транзакция</text>
+<polyline points="1275,1370 1275,1290 1650,1290 1650,1190" fill="none" stroke="#151515" stroke-width="3"/>
+<polygon points="1650,1190 1659.370668231452,1209.9045365908391 1640.629331768548,1209.9045365908391" fill="#151515"/>
+<rect x="1423.0" y="1262.05" width="174.0" height="55.9" fill="white" stroke="white" stroke-width="0"/>
+<text x="1510" y="1304.62" font-family="Arial, sans-serif" font-size="43" font-weight="400" text-anchor="middle" fill="#151515">BRPOP</text>
+</svg>

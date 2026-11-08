@@ -181,7 +181,9 @@ def main():
     markdown = (ROOT / 'report.md').read_text()
     bibliography = markdown.split('# СПИСОК ИСПОЛЬЗОВАННЫХ ИСТОЧНИКОВ', 1)[1].split('# ПРИЛОЖЕНИЕ', 1)[0]
     source_count = len(re.findall(r'^\d+\. ', bibliography, flags=re.MULTILINE))
-    text(f'(ИиППО) – {args.pages} с., 1 кн., 5 рис., 5 табл., {source_count} ист., 2 прил.', 55)
+    figure_count = len(re.findall(r'^!\[Рисунок ', markdown, flags=re.MULTILINE))
+    appendix_count = len(re.findall(r'^# ПРИЛОЖЕНИЕ ', markdown, flags=re.MULTILINE))
+    text(f'(ИиППО) – {args.pages} с., 1 кн., {figure_count} рис., 5 табл., {source_count} ист., {appendix_count} прил.', 55)
     abstract = markdown.split('# ТЕРМИНЫ И ОПРЕДЕЛЕНИЯ', 1)[0].split('\n\n')
     keyword = next(s for s in abstract if s.startswith('Ключевые слова:'))
     text(keyword.removeprefix('Ключевые слова: ').rstrip('.'), 56)

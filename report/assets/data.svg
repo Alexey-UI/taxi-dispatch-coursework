@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2200 1580" width="2200" height="1580">
+<rect width="100%" height="100%" fill="white"/>
+<rect x="30" y="200" width="590" height="289" fill="white" stroke="#151515" stroke-width="3"/>
+<rect x="30" y="200" width="590" height="88" fill="#eeeeee" stroke="#151515" stroke-width="3"/>
+<text x="325.0" y="262.36" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">drivers</text>
+<text x="54" y="337.48" font-family="Arial, sans-serif" font-size="47" font-weight="400" text-anchor="start" fill="#151515">PK id; name</text>
+<text x="54" y="404.48" font-family="Arial, sans-serif" font-size="47" font-weight="400" text-anchor="start" fill="#151515">class; x; y</text>
+<text x="54" y="471.48" font-family="Arial, sans-serif" font-size="47" font-weight="400" text-anchor="start" fill="#151515">status</text>
+<rect x="780" y="200" width="660" height="557" fill="white" stroke="#151515" stroke-width="3"/>
+<rect x="780" y="200" width="660" height="88" fill="#eeeeee" stroke="#151515" stroke-width="3"/>
+<text x="1110.0" y="262.36" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">orders</text>
+<text x="804" y="337.48" font-family="Arial, sans-serif" font-size="47" font-weight="400" text-anchor="start" fill="#151515">PK id; owner_id</text>
+<text x="804" y="404.48" font-family="Arial, sans-serif" font-size="47" font-weight="400" text-anchor="start" fill="#151515">class; origin</text>
+<text x="804" y="471.48" font-family="Arial, sans-serif" font-size="47" font-weight="400" text-anchor="start" fill="#151515">pickup_x; pickup_y</text>
+<text x="804" y="538.48" font-family="Arial, sans-serif" font-size="47" font-weight="400" text-anchor="start" fill="#151515">dropoff_x; dropoff_y</text>
+<text x="804" y="605.48" font-family="Arial, sans-serif" font-size="47" font-weight="400" text-anchor="start" fill="#151515">status; FK driver_id</text>
+<text x="804" y="672.48" font-family="Arial, sans-serif" font-size="47" font-weight="400" text-anchor="start" fill="#151515">offer_expires</text>
+<text x="804" y="739.48" font-family="Arial, sans-serif" font-size="47" font-weight="400" text-anchor="start" fill="#151515">created_at; updated_at</text>
+<rect x="1610" y="200" width="560" height="289" fill="white" stroke="#151515" stroke-width="3"/>
+<rect x="1610" y="200" width="560" height="88" fill="#eeeeee" stroke="#151515" stroke-width="3"/>
+<text x="1890.0" y="262.36" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">attempts</text>
+<text x="1634" y="337.48" font-family="Arial, sans-serif" font-size="47" font-weight="400" text-anchor="start" fill="#151515">PK, FK order_id</text>
+<text x="1634" y="404.48" font-family="Arial, sans-serif" font-size="47" font-weight="400" text-anchor="start" fill="#151515">PK, FK driver_id</text>
+<text x="1634" y="471.48" font-family="Arial, sans-serif" font-size="47" font-weight="400" text-anchor="start" fill="#151515">created_at</text>
+<rect x="780" y="1050" width="660" height="289" fill="white" stroke="#151515" stroke-width="3"/>
+<rect x="780" y="1050" width="660" height="88" fill="#eeeeee" stroke="#151515" stroke-width="3"/>
+<text x="1110.0" y="1112.36" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">events</text>
+<text x="804" y="1187.48" font-family="Arial, sans-serif" font-size="47" font-weight="400" text-anchor="start" fill="#151515">PK id; order_id</text>
+<text x="804" y="1254.48" font-family="Arial, sans-serif" font-size="47" font-weight="400" text-anchor="start" fill="#151515">service; kind</text>
+<text x="804" y="1321.48" font-family="Arial, sans-serif" font-size="47" font-weight="400" text-anchor="start" fill="#151515">message; created_at</text>
+<rect x="30" y="1050" width="590" height="222" fill="white" stroke="#151515" stroke-width="3"/>
+<rect x="30" y="1050" width="590" height="88" fill="#eeeeee" stroke="#151515" stroke-width="3"/>
+<text x="325.0" y="1112.36" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">demo_settings</text>
+<text x="54" y="1187.48" font-family="Arial, sans-serif" font-size="47" font-weight="400" text-anchor="start" fill="#151515">PK singleton</text>
+<text x="54" y="1254.48" font-family="Arial, sans-serif" font-size="47" font-weight="400" text-anchor="start" fill="#151515">running; scenario</text>
+<polyline points="620,355 780,355" fill="none" stroke="#151515" stroke-width="3"/>
+<polygon points="780,355 760.0954634091609,364.370668231452 760.0954634091609,345.629331768548" fill="#151515"/>
+<rect x="601.25" y="129.0" width="197.5" height="52.0" fill="white" stroke="white" stroke-width="0"/>
+<text x="700" y="168.6" font-family="Arial, sans-serif" font-size="40" font-weight="400" text-anchor="middle" fill="#151515">0..1 : 0..N</text>
+<polyline points="1440,355 1610,355" fill="none" stroke="#151515" stroke-width="3"/>
+<polygon points="1610,355 1590.0954634091609,364.370668231452 1590.0954634091609,345.629331768548" fill="#151515"/>
+<rect x="1448.5" y="129.0" width="153.0" height="52.0" fill="white" stroke="white" stroke-width="0"/>
+<text x="1525" y="168.6" font-family="Arial, sans-serif" font-size="40" font-weight="400" text-anchor="middle" fill="#151515">1 : 0..N</text>
+<polyline points="325,200 325,85 1890,85 1890,200" fill="none" stroke="#151515" stroke-width="3"/>
+<polygon points="1890,200 1880.629331768548,180.0954634091608 1899.370668231452,180.0954634091608" fill="#151515"/>
+<rect x="825.5" y="57.05" width="549.0" height="55.9" fill="white" stroke="white" stroke-width="0"/>
+<text x="1100" y="99.62" font-family="Arial, sans-serif" font-size="43" font-weight="400" text-anchor="middle" fill="#151515">drivers → attempts: 1 : 0..N</text>
+<polyline points="1110,1050 1110,757" fill="none" stroke="#151515" stroke-width="3" stroke-dasharray="12 10"/>
+<polygon points="1110,757 1119.370668231452,776.9045365908391 1100.629331768548,776.9045365908391" fill="#151515"/>
+<rect x="843.765625" y="877.05" width="532.46875" height="55.9" fill="white" stroke="white" stroke-width="0"/>
+<text x="1110" y="919.62" font-family="Arial, sans-serif" font-size="43" font-weight="400" text-anchor="middle" fill="#151515">Связь по order_id; без FK</text>
+<text x="1100" y="1466.32" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">UNIQUE driver_id только для активных состояний orders</text>
+<text x="1100" y="1534.62" font-family="Arial, sans-serif" font-size="43" font-weight="400" text-anchor="middle" fill="#151515">Сплошная линия — внешний ключ; пунктир — логическая связь</text>
+</svg>

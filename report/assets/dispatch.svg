@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2200 2090" width="2200" height="2090">
+<rect width="100%" height="100%" fill="white"/>
+<rect x="380" y="40" width="1440" height="160" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="1100.0" y="106.86" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">Начало итерации</text>
+<text x="1100.0" y="167.82" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">BEGIN; pg_try_advisory_xact_lock</text>
+<polyline points="1100,200 1100,300" fill="none" stroke="#151515" stroke-width="3"/>
+<polygon points="1100,300 1090.629331768548,280.0954634091608 1109.370668231452,280.0954634091608" fill="#151515"/>
+<rect x="380" y="300" width="1440" height="160" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="1100.0" y="366.86" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">Координатор занят?</text>
+<text x="1100.0" y="427.82" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">Да → завершить итерацию без ожидания</text>
+<polyline points="1100,460 1100,560" fill="none" stroke="#151515" stroke-width="3"/>
+<polygon points="1100,560 1090.629331768548,540.0954634091609 1109.370668231452,540.0954634091609" fill="#151515"/>
+<rect x="380" y="560" width="1440" height="160" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="1100.0" y="626.86" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">Освободить истёкшие предложения</text>
+<text x="1100.0" y="687.82" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">offered → pending; водитель → available</text>
+<polyline points="1100,720 1100,820" fill="none" stroke="#151515" stroke-width="3"/>
+<polygon points="1100,820 1090.629331768548,800.0954634091609 1109.370668231452,800.0954634091609" fill="#151515"/>
+<rect x="380" y="820" width="1440" height="160" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="1100.0" y="886.86" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">Выбрать ожидающий заказ</text>
+<text x="1100.0" y="947.82" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">Старейший заказ с доступным кандидатом</text>
+<polyline points="1100,980 1100,1080" fill="none" stroke="#151515" stroke-width="3"/>
+<polygon points="1100,1080 1090.629331768548,1060.0954634091609 1109.370668231452,1060.0954634091609" fill="#151515"/>
+<rect x="380" y="1080" width="1440" height="220" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="1100.0" y="1145.36" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">Выбрать ближайшего водителя</text>
+<text x="1100.0" y="1206.32" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">Совместимый класс; нет недавнего отказа</text>
+<text x="1100.0" y="1269.32" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">Дорожное расстояние; при равенстве — id</text>
+<polyline points="1100,1300 1100,1410" fill="none" stroke="#151515" stroke-width="3"/>
+<polygon points="1100,1410 1090.629331768548,1390.0954634091609 1109.370668231452,1390.0954634091609" fill="#151515"/>
+<rect x="380" y="1410" width="1440" height="220" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="1100.0" y="1475.36" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">Зафиксировать предложение</text>
+<text x="1100.0" y="1536.32" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">driver → offered; order → offered</text>
+<text x="1100.0" y="1599.32" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">attempts + event в той же транзакции</text>
+<polyline points="1100,1630 1100,1840" fill="none" stroke="#151515" stroke-width="3"/>
+<polygon points="1100,1840 1090.629331768548,1820.0954634091609 1109.370668231452,1820.0954634091609" fill="#151515"/>
+<rect x="380" y="1840" width="1440" height="160" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="1100.0" y="1906.86" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">Завершение</text>
+<text x="1100.0" y="1967.82" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">COMMIT; блокировка освобождается</text>
+<polyline points="1820,380 2020,380 2020,465" fill="none" stroke="#151515" stroke-width="3"/>
+<polygon points="2020,465 2010.629331768548,445.0954634091608 2029.370668231452,445.0954634091608" fill="#151515"/>
+<rect x="1870" y="465" width="300" height="170" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="2020.0" y="536.86" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">Выход</text>
+<text x="2020.0" y="597.82" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">Rollback</text>
+<rect x="1958.5" y="303.8" width="83.0" height="62.400000000000006" fill="white" stroke="white" stroke-width="0"/>
+<text x="2000" y="351.32" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">Да</text>
+<rect x="1049.01171875" y="480.75" width="101.9765625" height="58.5" fill="white" stroke="white" stroke-width="0"/>
+<text x="1100" y="525.3" font-family="Arial, sans-serif" font-size="45" font-weight="400" text-anchor="middle" fill="#151515">Нет</text>
+<rect x="583.7734375" y="1711.4" width="1032.453125" height="57.2" fill="white" stroke="white" stroke-width="0"/>
+<text x="1100" y="1754.96" font-family="Arial, sans-serif" font-size="44" font-weight="400" text-anchor="middle" fill="#151515">Повтор выбора: до 32 назначений за транзакцию</text>
+<polyline points="380,1520 180,1520 180,900 380,900" fill="none" stroke="#151515" stroke-width="3"/>
+<polygon points="380,900 360.0954634091608,909.370668231452 360.0954634091608,890.629331768548" fill="#151515"/>
+<rect x="130.50390625" y="1214.0" width="198.9921875" height="52.0" fill="white" stroke="white" stroke-width="0"/>
+<text x="230" y="1253.6" font-family="Arial, sans-serif" font-size="40" font-weight="400" text-anchor="middle" fill="#151515">Есть ещё</text>
+<text x="1100" y="2064.62" font-family="Arial, sans-serif" font-size="43" font-weight="400" text-anchor="middle" fill="#151515">Нет подходящего заказа → COMMIT; строки выбираются FOR UPDATE SKIP LOCKED</text>
+</svg>

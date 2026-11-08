@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2200 1680" width="2200" height="1680">
+<rect width="100%" height="100%" fill="white"/>
+<rect x="400" y="40" width="1400" height="170" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="1100.0" y="111.86" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">Push / pull request</text>
+<text x="1100.0" y="172.82" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">Исходный код и конфигурация</text>
+<polyline points="1100,210 1100,280" fill="none" stroke="#151515" stroke-width="3"/>
+<polygon points="1100,280 1090.629331768548,260.0954634091608 1109.370668231452,260.0954634091608" fill="#151515"/>
+<rect x="400" y="280" width="1400" height="170" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="1100.0" y="351.86" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">Проверки и сборка</text>
+<text x="1100.0" y="412.82" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">Go vet, test -race; Node.js tests</text>
+<polyline points="1100,450 1100,520" fill="none" stroke="#151515" stroke-width="3"/>
+<polygon points="1100,520 1090.629331768548,500.0954634091608 1109.370668231452,500.0954634091608" fill="#151515"/>
+<rect x="400" y="520" width="1400" height="170" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="1100.0" y="591.86" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">Docker Compose</text>
+<text x="1100.0" y="652.82" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">Два dispatcher; прогон без Redis</text>
+<polyline points="1100,690 1100,760" fill="none" stroke="#151515" stroke-width="3"/>
+<polygon points="1100,760 1090.629331768548,740.0954634091609 1109.370668231452,740.0954634091609" fill="#151515"/>
+<rect x="400" y="760" width="1400" height="170" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="1100.0" y="831.86" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">Временный кластер k3d</text>
+<text x="1100.0" y="892.82" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">Импорт образов; Helm install</text>
+<polyline points="1100,930 1100,1000" fill="none" stroke="#151515" stroke-width="3"/>
+<polygon points="1100,1000 1090.629331768548,980.0954634091609 1109.370668231452,980.0954634091609" fill="#151515"/>
+<rect x="400" y="1000" width="1400" height="170" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="1100.0" y="1071.86" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">HTTP-проверки через Ingress</text>
+<text x="1100.0" y="1132.82" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">Ожидание маршрута; smoke-сценарий</text>
+<polyline points="1100,1170 1100,1240" fill="none" stroke="#151515" stroke-width="3"/>
+<polygon points="1100,1240 1090.629331768548,1220.0954634091609 1109.370668231452,1220.0954634091609" fill="#151515"/>
+<rect x="400" y="1240" width="1400" height="220" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="1100.0" y="1305.36" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">Публикация в GHCR</text>
+<text x="1100.0" y="1366.32" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">Только main: app, web, simulator</text>
+<text x="1100.0" y="1429.32" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">linux/amd64 и linux/arm64; тег SHA</text>
+<text x="1100" y="1580.3" font-family="Arial, sans-serif" font-size="45" font-weight="400" text-anchor="middle" fill="#151515">Облачный выпуск выполняется отдельно; Terraform apply не запускался</text>
+</svg>

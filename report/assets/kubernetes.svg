@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2200 1800" width="2200" height="1800">
+<rect width="100%" height="100%" fill="white"/>
+<rect x="25" y="25" width="2150" height="1740" fill="white" stroke="#777777" stroke-width="2"/>
+<text x="1100" y="113.02" font-family="Arial, sans-serif" font-size="53" font-weight="700" text-anchor="middle" fill="#151515">namespace taxi · K3s: один server и два agent в k3d</text>
+<rect x="85" y="200" width="900" height="160" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="535.0" y="266.86" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">Внешний HTTP</text>
+<text x="535.0" y="327.82" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">Ingress / Traefik → Service web</text>
+<rect x="1215" y="200" width="900" height="160" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="1665.0" y="266.86" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">web</text>
+<text x="1665.0" y="327.82" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">Deployment; 2 реплики Nginx</text>
+<polyline points="985,280 1215,280" fill="none" stroke="#151515" stroke-width="3"/>
+<polygon points="1215,280 1195.0954634091609,289.370668231452 1195.0954634091609,270.629331768548" fill="#151515"/>
+<rect x="85" y="440" width="900" height="160" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="535.0" y="506.86" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">Внутренний HTTP</text>
+<text x="535.0" y="567.82" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">Service api:8080</text>
+<rect x="1215" y="440" width="900" height="160" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="1665.0" y="506.86" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">api</text>
+<text x="1665.0" y="567.82" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">Deployment; 2 реплики Go</text>
+<polyline points="985,520 1215,520" fill="none" stroke="#151515" stroke-width="3"/>
+<polygon points="1215,520 1195.0954634091609,529.370668231452 1195.0954634091609,510.629331768548" fill="#151515"/>
+<rect x="85" y="680" width="900" height="160" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="535.0" y="746.86" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">Фоновая обработка</text>
+<text x="535.0" y="807.82" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">Сеть namespace; без Service</text>
+<rect x="1215" y="680" width="900" height="160" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="1665.0" y="746.86" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">dispatcher</text>
+<text x="1665.0" y="807.82" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">Deployment; 2 реплики Go</text>
+<polyline points="985,760 1215,760" fill="none" stroke="#151515" stroke-width="3"/>
+<polygon points="1215,760 1195.0954634091609,769.370668231452 1195.0954634091609,750.629331768548" fill="#151515"/>
+<rect x="85" y="920" width="900" height="160" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="535.0" y="986.86" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">Модель движения</text>
+<text x="535.0" y="1047.82" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">HTTP к Service api</text>
+<rect x="1215" y="920" width="900" height="160" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="1665.0" y="986.86" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">simulator</text>
+<text x="1665.0" y="1047.82" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">Deployment; 1 реплика Node.js</text>
+<polyline points="985,1000 1215,1000" fill="none" stroke="#151515" stroke-width="3"/>
+<polygon points="1215,1000 1195.0954634091609,1009.370668231452 1195.0954634091609,990.629331768548" fill="#151515"/>
+<rect x="85" y="1160" width="900" height="160" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="535.0" y="1226.86" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">Постоянное хранение</text>
+<text x="535.0" y="1287.82" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">Service postgres:5432</text>
+<rect x="1215" y="1160" width="900" height="160" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="1665.0" y="1226.86" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">PostgreSQL</text>
+<text x="1665.0" y="1287.82" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">StatefulSet; PVC local-path</text>
+<polyline points="985,1240 1215,1240" fill="none" stroke="#151515" stroke-width="3"/>
+<polygon points="1215,1240 1195.0954634091609,1249.370668231452 1195.0954634091609,1230.629331768548" fill="#151515"/>
+<rect x="85" y="1400" width="900" height="160" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="535.0" y="1466.86" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">Уведомления</text>
+<text x="535.0" y="1527.82" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">Service redis:6379</text>
+<rect x="1215" y="1400" width="900" height="160" fill="white" stroke="#151515" stroke-width="3"/>
+<text x="1665.0" y="1466.86" font-family="Arial, sans-serif" font-size="54" font-weight="700" text-anchor="middle" fill="#151515">Redis</text>
+<text x="1665.0" y="1527.82" font-family="Arial, sans-serif" font-size="48" font-weight="400" text-anchor="middle" fill="#151515">Deployment; без постоянного тома</text>
+<polyline points="985,1480 1215,1480" fill="none" stroke="#151515" stroke-width="3"/>
+<polygon points="1215,1480 1195.0954634091609,1489.370668231452 1195.0954634091609,1470.629331768548" fill="#151515"/>
+<text x="1100" y="1730.64" font-family="Arial, sans-serif" font-size="46" font-weight="400" text-anchor="middle" fill="#151515">Узлы k3d находятся на одном хосте; PostgreSQL — одиночный</text>
+</svg>

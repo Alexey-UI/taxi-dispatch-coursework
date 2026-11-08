@@ -28,60 +28,10 @@ FONT = '/System/Library/Fonts/Supplemental/Arial.ttf'
 if not Path(FONT).exists():
     FONT = '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
 
-def font(size):
-    return ImageFont.truetype(FONT, size)
-
-def diagram(filename, title, boxes, arrows, size=(1600, 850)):
-    img = Image.new('RGB', size, '#fbfcf8')
-    d = ImageDraw.Draw(img)
-    d.text((50, 30), title, fill='#1d2a22', font=font(38))
-    for x1,y1,x2,y2 in arrows:
-        d.line((x1,y1,x2,y2), fill='#84946b', width=5)
-        import math
-        angle = math.atan2(y2-y1,x2-x1)
-        points = [(x2,y2),(x2-20*math.cos(angle-.45),y2-20*math.sin(angle-.45)),(x2-20*math.cos(angle+.45),y2-20*math.sin(angle+.45))]
-        d.polygon(points, fill='#84946b')
-    for x,y,w,h,lines in boxes:
-        d.rounded_rectangle((x,y,x+w,y+h), radius=20, fill='#e8efdd', outline='#879c6c', width=3)
-        for i,line in enumerate(lines):
-            f=font(26 if i == 0 else 21)
-            bbox=d.textbbox((0,0),line,font=f)
-            d.text((x+(w-bbox[2])/2,y+24+i*36),line,font=f,fill='#223320')
-    img.save(ASSETS / filename)
-
-diagram('architecture.png','Компоненты и сетевые связи',[
- (50,130,330,120,['Браузер','Роли и публичная карта']),
- (520,130,340,120,['Nginx / web','Traefik перед web в K3s']),
- (1010,130,480,120,['Go API × 2','HTTP, роли, заказы']),
- (60,420,330,120,['Node.js simulator','Сценарии и движение']),
- (570,420,340,120,['PostgreSQL','Заказы, водители, events']),
- (1080,420,390,120,['Redis','Сигнал новой работы']),
- (570,660,340,120,['Go dispatcher × 2','Поиск, тайм-аут, назначение']),
-],[(380,190,520,190),(860,190,1010,190),(1250,250,740,420),(1250,250,1275,420),(390,450,1010,210),(740,660,740,540),(910,720,1250,540)])
-diagram('data.png','Сущности и ограничения',[
- (65,200,380,220,['drivers','id, class, x, y, status','available / offered / busy']),
- (580,200,450,300,['orders','id, owner_id, class, route','status, driver_id, expires','UNIQUE: активный driver_id']),
- (1160,200,360,220,['attempts','order_id + driver_id','Окно повторной попытки']),
- (580,610,450,150,['events','service, kind, order_id, time'])
-],[(445,300,580,300),(1030,300,1160,300),(800,500,800,610)])
-diagram('lifecycle.png','Состояния заказа и повторное назначение',[
- (50,180,300,120,['pending','Ожидает кандидата']),
- (480,180,300,120,['offered','12 секунд на ответ']),
- (930,180,300,120,['accepted','Водитель едет к подаче']),
- (930,460,300,120,['arrived','Водитель прибыл']),
- (480,460,300,120,['in_progress','Поездка']),
- (50,460,300,120,['completed','Завершение']),
- (1190,650,340,120,['cancelled','До начала поездки']),
- (50,650,730,120,['Отказ или тайм-аут: offered → pending','Водитель освобождается, поиск повторяется']),
-],[(350,240,480,240),(780,240,930,240),(1080,300,1080,460),(930,520,780,520),(480,520,350,520)])
-diagram('pipeline.png','Проверка и доставка GitHub Actions',[
- (50,160,420,140,['Git push / pull request','Conventional Commits']),
- (580,160,420,140,['Проверки Go и JavaScript','vet, test -race, Node tests']),
- (1110,160,420,140,['Compose-интеграция','Два worker; отказ Redis']),
- (1110,490,420,150,['Временный Kubernetes','k3d → Helm → HTTP smoke']),
- (580,490,420,150,['Публикация GHCR','amd64 + arm64; тег SHA']),
- (50,490,420,150,['Облачная ВМ — позже','Отдельный ручной выпуск']),
-],[(470,230,580,230),(1000,230,1110,230),(1320,300,1320,490),(1110,565,1000,565),(580,565,470,565)])
+# Shared monochrome figures; keep the legacy builder from restoring old assets.
+from draw_diagrams import architecture, data, lifecycle, pipeline, dispatch, sequence, kubernetes
+for draw in [architecture, data, lifecycle, pipeline, dispatch, sequence, kubernetes]:
+    draw()
 
 screenshot = ROOT.parent / 'artifacts/screenshots/desktop.png'
 if screenshot.exists():
