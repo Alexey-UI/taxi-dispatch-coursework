@@ -20,3 +20,7 @@ courses/
 report/output/*.tmp
 __pycache__/
 ~$*
+
+# User-provided reference documents in the repository root remain private.
+/*.docx
+/*.pdf
